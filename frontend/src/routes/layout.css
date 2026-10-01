@@ -1,0 +1,78 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+
+/*
+ * Palette derived from the Dannebrog: flag red (#C8102E, Pantone 186 C) and white.
+ * `dannebrog` is the red, built in OKLCH so every step keeps the flag's hue.
+ * `snow` is the white, a neutral scale lightly tinted toward the same hue so greys feel related.
+ */
+@theme {
+	--color-dannebrog-50: oklch(0.971 0.014 17);
+	--color-dannebrog-100: oklch(0.936 0.033 17);
+	--color-dannebrog-200: oklch(0.885 0.063 18);
+	--color-dannebrog-300: oklch(0.808 0.114 19);
+	--color-dannebrog-400: oklch(0.704 0.18 21);
+	--color-dannebrog-500: oklch(0.61 0.215 23);
+	--color-dannebrog-600: #c8102e; /* the flag */
+	--color-dannebrog-700: oklch(0.46 0.185 23);
+	--color-dannebrog-800: oklch(0.39 0.155 22);
+	--color-dannebrog-900: oklch(0.32 0.12 21);
+	--color-dannebrog-950: oklch(0.22 0.085 20);
+
+	--color-snow-50: oklch(0.993 0.003 17);
+	--color-snow-100: oklch(0.975 0.006 17);
+	--color-snow-200: oklch(0.93 0.009 17);
+	--color-snow-300: oklch(0.87 0.012 17);
+	--color-snow-400: oklch(0.71 0.014 17);
+	--color-snow-500: oklch(0.56 0.015 17);
+	--color-snow-600: oklch(0.45 0.014 17);
+	--color-snow-700: oklch(0.37 0.012 17);
+	--color-snow-800: oklch(0.27 0.01 17);
+	--color-snow-900: oklch(0.2 0.008 17);
+	--color-snow-950: oklch(0.14 0.006 17);
+
+	/* Semantic tokens: components use these, so dark mode is a single override below. */
+	--color-page: var(--color-snow-50);
+	--color-surface: #fff;
+	--color-subtle: var(--color-snow-100);
+	--color-ink: var(--color-snow-900);
+	--color-ink-muted: var(--color-snow-500);
+	--color-line: var(--color-snow-200);
+	--color-brand: var(--color-dannebrog-600);
+	--color-brand-ink: var(--color-dannebrog-700);
+	--color-brand-soft: var(--color-dannebrog-50);
+	--color-on-brand: var(--color-snow-50);
+
+	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--color-page: var(--color-snow-950);
+		--color-surface: var(--color-snow-900);
+		--color-subtle: var(--color-snow-800);
+		--color-ink: var(--color-snow-100);
+		--color-ink-muted: var(--color-snow-400);
+		--color-line: var(--color-snow-800);
+		--color-brand: var(--color-dannebrog-600);
+		--color-brand-ink: var(--color-dannebrog-300);
+		--color-brand-soft: color-mix(in oklch, var(--color-dannebrog-900) 45%, transparent);
+	}
+}
+
+html {
+	color-scheme: light dark;
+}
+
+body {
+	@apply bg-page font-sans text-ink antialiased;
+	font-feature-settings: 'cv11', 'ss01';
+}
+
+/* Freeze the page behind an open modal so only the dialog scrolls; the gutter stops layout shift. */
+html {
+	scrollbar-gutter: stable;
+}
+html:has(dialog[open]:modal) {
+	overflow: hidden;
+}
