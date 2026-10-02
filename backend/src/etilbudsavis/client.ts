@@ -1,7 +1,7 @@
 import { fetchAllPages } from '../paginate.ts';
 import { err, ok, type Result } from '../result.ts';
 import { encodeOffersRequest, type OffersQuery } from './query.ts';
-import { OffersResponseSchema, type Offer } from './schema.ts';
+import { OfferSchema, OffersResponseSchema, type Offer } from './schema.ts';
 
 const ENDPOINT = 'https://etilbudsavis.dk/';
 const TIMEOUT_MS = 10_000;
@@ -10,6 +10,22 @@ export type FetchOffersError =
   | { kind: 'network'; message: string }
   | { kind: 'http'; status: number }
   | { kind: 'invalid_response'; message: string };
+
+/** Keeps every offer that matches the schema and logs the rest, rather than rejecting the whole page. */
+export const parseOffers = (rawOffers: readonly unknown[]): Offer[] => {
+  const offers: Offer[] = [];
+
+  for (const raw of rawOffers) {
+    const parsed = OfferSchema.safeParse(raw);
+    if (parsed.success) {
+      offers.push(parsed.data);
+      continue;
+    }
+    console.warn('Skipping offer that does not match the schema', parsed.error.issues);
+  }
+
+  return offers;
+};
 
 export const fetchOffers = async (query: OffersQuery): Promise<Result<Offer[], FetchOffersError>> => {
   let response: Response;
@@ -36,7 +52,7 @@ export const fetchOffers = async (query: OffersQuery): Promise<Result<Offer[], F
   const parsed = OffersResponseSchema.safeParse(body);
   if (!parsed.success) return err({ kind: 'invalid_response', message: parsed.error.message });
 
-  return ok(parsed.data.value.data);
+  return ok(parseOffers(parsed.data.value.data));
 };
 
 /** Pages through every result for `query`, using its `pagination.limit` as the page size. */

@@ -1,4 +1,4 @@
-import { loadBeerListing } from '#lib/server/beers.ts';
+import { loadListing } from '#lib/server/listing.ts';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = ({ url }) => loadBeerListing(url);
+export const load: PageServerLoad = ({ url }) => loadListing(url);

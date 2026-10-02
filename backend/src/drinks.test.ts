@@ -1,18 +1,19 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { cheapestPerLiter, detectPant } from './beers.ts';
+import { cheapestPerLiter, detectPant } from './drinks.ts';
 import type { Offer } from './etilbudsavis/schema.ts';
 
-const offer = (name: string, baseUnit: string | null, unitPrice: number | null): Offer =>
-  ({ name, baseUnit, unitPrice }) as Offer;
+const offer = (name: string, baseUnit: string | null, unitPrice: number | null, departmentSlug = 'beverages'): Offer =>
+  ({ name, baseUnit, unitPrice, departmentSlug }) as Offer;
 
-test('keeps only per-liter offers, sorted by unitPrice ascending', () => {
+test('keeps only per-liter drinks, sorted by unitPrice ascending', () => {
   const result = cheapestPerLiter([
     offer('Tuborg', 'liter', 12.5),
     offer('Oktoberfestbier', 'piece', 189),
     offer('Harboe', 'liter', 9.09),
     offer('Kalvekæber', 'kilogram', 250),
     offer('Unknown', 'liter', null),
+    offer('Romkugler', 'liter', 1, 'snacks-and-candies'),
   ]);
 
   assert.deepEqual(

@@ -1,8 +1,13 @@
 <script lang="ts">
-	import type { Store } from '#lib/server/beers.ts';
+	import type { Store } from '#lib/server/listing.ts';
 	import { formatPrice } from '#lib/format.ts';
 
-	let { stores, selected, resultCount }: { stores: Store[]; selected: string[]; resultCount: number } = $props();
+	let {
+		category,
+		stores,
+		selected,
+		resultCount
+	}: { category: string; stores: Store[]; selected: string[]; resultCount: number } = $props();
 
 	let dialog: HTMLDialogElement;
 
@@ -30,19 +35,21 @@
 	command="show-modal"
 	onclick={open}
 	aria-haspopup="dialog"
-	class="flex w-full items-center gap-3 rounded-2xl bg-surface px-4 py-3 text-left ring-1 ring-line transition hover:ring-snow-300 focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none sm:w-80 dark:hover:ring-snow-700"
+	class="inline-flex max-w-full items-center gap-2 rounded-full bg-surface py-2 pr-3 pl-3.5 text-sm font-medium ring-1 transition focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none {selected.length > 0
+		? 'ring-brand/50'
+		: 'ring-line hover:ring-line-strong'}"
 >
-	<span class="flex min-w-0 flex-col">
-		<span class="text-xs text-ink-muted">Butikker</span>
-		<span class="truncate text-sm font-medium">{summary}</span>
-	</span>
+	<svg viewBox="0 0 20 20" class="size-4 shrink-0 text-ink-muted" aria-hidden="true">
+		<path d="M3.5 6h13M6 10h8M8.5 14h3" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+	</svg>
+	<span class="truncate">{summary}</span>
 	{#if selected.length > 0}
-		<span class="ml-auto rounded-full bg-brand px-2 py-0.5 text-xs font-semibold text-on-brand tabular-nums">
+		<span class="grid size-5 shrink-0 place-items-center rounded-full bg-brand text-[11px] font-semibold text-on-brand tabular-nums">
 			{selected.length}
 		</span>
 	{/if}
-	<svg viewBox="0 0 20 20" class="size-4 shrink-0 text-ink-muted {selected.length > 0 ? '' : 'ml-auto'}" aria-hidden="true">
-		<path d="M4 6h12M6.5 10h7M9 14h2" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+	<svg viewBox="0 0 20 20" class="size-4 shrink-0 text-ink-muted" aria-hidden="true">
+		<path d="m6 8 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
 	</svg>
 </button>
 
@@ -62,10 +69,12 @@
 		data-sveltekit-noscroll
 		data-sveltekit-replacestate
 	>
+		<input type="hidden" name="category" value={category} />
+
 		<header class="flex items-start gap-3 border-b border-line px-5 pt-5 pb-4">
 			<div class="min-w-0 flex-1">
 				<h2 id="store-filter-title" class="text-lg font-semibold tracking-tight">Vælg butikker</h2>
-				<p class="text-sm text-ink-muted">Sorteret efter billigste øl i kæden</p>
+				<p class="text-sm text-ink-muted">Sorteret efter kædens billigste tilbud</p>
 			</div>
 			<button
 				type="button"
@@ -122,7 +131,7 @@
 
 		<footer class="flex items-center gap-3 border-t border-line px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
 			{#if selected.length > 0}
-				<a href="?" data-sveltekit-noscroll data-sveltekit-keepfocus class="text-sm text-ink-muted hover:text-ink">Ryd valg</a>
+				<a href="?category={category}" data-sveltekit-noscroll data-sveltekit-keepfocus class="text-sm text-ink-muted hover:text-ink">Ryd valg</a>
 			{/if}
 			<!-- Without JS this submits the selection; with JS the list is already filtered, so it just closes. -->
 			<button

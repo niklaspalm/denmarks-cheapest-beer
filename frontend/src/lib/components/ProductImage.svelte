@@ -6,6 +6,6 @@
 	{#if src}
 		<img {src} {alt} loading="lazy" class="size-full object-contain p-1.5" />
 	{:else}
-		<span class="text-2xl" aria-hidden="true">🍺</span>
+		<span class="text-2xl" aria-hidden="true">🍾</span>
 	{/if}
 </div>

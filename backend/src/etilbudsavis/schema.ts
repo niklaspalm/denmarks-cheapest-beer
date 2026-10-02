@@ -24,7 +24,8 @@ export const OfferSchema = z.object({
   name: z.string(),
   description: z.string().nullable(),
   currencyCode: z.string(),
-  price: z.number(),
+  /** Null on some multi-buy wine offers that only state a price per liter. */
+  price: z.number().nullable(),
   /** Price per `baseUnit`, e.g. DKK per liter. */
   unitPrice: z.number().nullable(),
   /** Observed: 'liter' | 'piece' | 'kilogram'. Left open so a new unit upstream doesn't fail the whole response. */
@@ -62,7 +63,8 @@ export const OffersResponseSchema = z.object({
   key: z.string(),
   status: z.literal('success'),
   value: z.object({
-    data: z.array(OfferSchema),
+    // Validated one by one in the client, so a single odd offer can't fail a whole category.
+    data: z.array(z.unknown()),
     metadata: z.object({
       pagination: z.object({ limit: z.number(), offset: z.number() }),
     }),

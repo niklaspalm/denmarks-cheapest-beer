@@ -2,22 +2,24 @@ import type { Offer } from './etilbudsavis/schema.ts';
 
 export type LiterOffer = Offer & { baseUnit: 'liter'; unitPrice: number };
 
-const isPricedPerLiter = (offer: Offer): offer is LiterOffer =>
-  offer.baseUnit === 'liter' && offer.unitPrice !== null;
+// Free-text search also matches food ("rom" → rum truffles, "whisky" → whisky-glazed pork), so require the drinks department.
+const isDrinkPricedPerLiter = (offer: Offer): offer is LiterOffer =>
+  offer.departmentSlug === 'beverages' && offer.baseUnit === 'liter' && offer.unitPrice !== null;
 
-/** Keeps only offers priced per liter, cheapest first. */
+/** Keeps only drinks priced per liter, cheapest first. */
 export const cheapestPerLiter = (offers: readonly Offer[]): LiterOffer[] =>
-  offers.filter(isPricedPerLiter).sort((a, b) => a.unitPrice - b.unitPrice);
+  offers.filter(isDrinkPricedPerLiter).sort((a, b) => a.unitPrice - b.unitPrice);
 
 export type PantStatus = 'included' | 'excluded' | 'unknown';
 
 /** UI-facing shape: only what an offer card needs, so the client payload stays small. */
-export interface Beer {
+export interface Drink {
   id: string;
   name: string;
   store: { id: string; name: string; logo: string | null };
   image: string | null;
-  price: number;
+  /** Null when the store only advertises a price per liter. */
+  price: number | null;
   pricePerLiter: number;
   pack: string | null;
   pant: PantStatus;
@@ -47,7 +49,7 @@ const formatPack = (offer: Offer): string | null => {
   return `${from === to ? from : `${from}–${to}`} × ${size}`;
 };
 
-export const toBeer = (offer: LiterOffer): Beer => ({
+export const toDrink = (offer: LiterOffer): Drink => ({
   id: offer.publicId,
   name: offer.name,
   store: {
