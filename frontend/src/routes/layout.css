@@ -31,37 +31,48 @@
 	--color-snow-900: oklch(0.2 0.008 17);
 	--color-snow-950: oklch(0.14 0.006 17);
 
-	/* Semantic tokens: components use these, so dark mode is a single override below. */
-	--color-page: var(--color-snow-50);
-	--color-surface: #fff;
-	--color-subtle: var(--color-snow-100);
-	--color-ink: var(--color-snow-900);
-	--color-ink-muted: var(--color-snow-500);
-	--color-line: var(--color-snow-200);
+	/*
+	 * Semantic tokens, as light-dark() pairs: components use these, and the active color-scheme picks the side.
+	 * color-scheme follows the system by default; [data-theme] on <html> pins it (see the theme toggle).
+	 */
+	--color-page: light-dark(var(--color-snow-50), var(--color-snow-950));
+	--color-surface: light-dark(#fff, var(--color-snow-900));
+	--color-subtle: light-dark(var(--color-snow-100), var(--color-snow-800));
+	--color-ink: light-dark(var(--color-snow-900), var(--color-snow-100));
+	--color-ink-muted: light-dark(var(--color-snow-500), var(--color-snow-400));
+	--color-line: light-dark(var(--color-snow-200), var(--color-snow-800));
+	--color-line-strong: light-dark(var(--color-snow-300), var(--color-snow-700));
 	--color-brand: var(--color-dannebrog-600);
-	--color-brand-ink: var(--color-dannebrog-700);
-	--color-brand-soft: var(--color-dannebrog-50);
+	--color-brand-ink: light-dark(var(--color-dannebrog-700), var(--color-dannebrog-300));
+	--color-brand-soft: light-dark(
+		var(--color-dannebrog-50),
+		color-mix(in oklch, var(--color-dannebrog-900) 45%, transparent)
+	);
 	--color-on-brand: var(--color-snow-50);
 
 	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--color-page: var(--color-snow-950);
-		--color-surface: var(--color-snow-900);
-		--color-subtle: var(--color-snow-800);
-		--color-ink: var(--color-snow-100);
-		--color-ink-muted: var(--color-snow-400);
-		--color-line: var(--color-snow-800);
-		--color-brand: var(--color-dannebrog-600);
-		--color-brand-ink: var(--color-dannebrog-300);
-		--color-brand-soft: color-mix(in oklch, var(--color-dannebrog-900) 45%, transparent);
+/* `dark:` follows the same rule as the tokens: a pinned theme wins, otherwise the system preference. */
+@custom-variant dark {
+	&:where([data-theme='dark'], [data-theme='dark'] *) {
+		@slot;
+	}
+	@media (prefers-color-scheme: dark) {
+		&:where(:root:not([data-theme='light']), :root:not([data-theme='light']) *) {
+			@slot;
+		}
 	}
 }
 
 html {
 	color-scheme: light dark;
+}
+html[data-theme='light'] {
+	color-scheme: light;
+}
+html[data-theme='dark'] {
+	color-scheme: dark;
 }
 
 body {
