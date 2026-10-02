@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Store } from '#lib/server/listing.ts';
+	import type { StoreSummary } from 'backend';
 	import { formatPrice } from '#lib/format.ts';
 
 	let {
@@ -7,7 +7,7 @@
 		stores,
 		selected,
 		resultCount
-	}: { category: string; stores: Store[]; selected: string[]; resultCount: number } = $props();
+	}: { category: string; stores: StoreSummary[]; selected: string[]; resultCount: number } = $props();
 
 	let dialog: HTMLDialogElement;
 
@@ -115,14 +115,23 @@
 						<span class="min-w-0 flex-1">
 							<span class="flex items-baseline gap-1.5">
 								<span class="truncate text-sm font-medium">{store.name}</span>
-								{#if index === 0}
+								{#if index === 0 && store.cheapest}
 									<span class="text-[10px] font-semibold tracking-wider text-brand uppercase">Billigst</span>
 								{/if}
 							</span>
-							<span class="block truncate text-xs text-ink-muted">{store.cheapest.name} · {store.offerCount} tilbud</span>
+							{#if store.cheapest}
+								<span class="block truncate text-xs text-ink-muted">{store.cheapest.name} · {store.offerCount} tilbud</span>
+							{:else}
+								<!-- A selected store kept from another category, listed so it can be unselected here. -->
+								<span class="block truncate text-xs text-ink-muted">Ingen tilbud i denne kategori</span>
+							{/if}
 						</span>
 						<span class="shrink-0 text-sm font-semibold tabular-nums">
-							{formatPrice(store.cheapest.pricePerLiter)}<span class="text-xs font-normal text-ink-muted">/l</span>
+							{#if store.cheapest}
+								{formatPrice(store.cheapest.pricePerLiter)}<span class="text-xs font-normal text-ink-muted">/l</span>
+							{:else}
+								<span class="text-ink-muted">–</span>
+							{/if}
 						</span>
 					</label>
 				{/each}

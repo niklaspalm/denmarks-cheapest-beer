@@ -15,6 +15,7 @@ interface CategoryDefinition {
 
 export const CATEGORIES = [
   { id: 'ol', label: 'Øl', searchTerm: 'øl' },
+  { id: 'sodavand', label: 'Sodavand', searchTerm: 'sodavand' },
   { id: 'glogg', label: 'Gløgg', searchTerm: 'gløgg', season: { from: { month: 11, day: 17 }, until: { month: 12, day: 30 } } },
   { id: 'rodvin', label: 'Rødvin', searchTerm: 'rødvin' },
   { id: 'hvidvin', label: 'Hvidvin', searchTerm: 'hvidvin' },

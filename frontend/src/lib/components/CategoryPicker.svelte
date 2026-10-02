@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { CategoryOption } from '#lib/server/listing.ts';
+	import type { CategoryCount } from 'backend';
 
 	let {
 		categories,
 		active,
 		selectedStores
-	}: { categories: CategoryOption[]; active: string; selectedStores: string[] } = $props();
+	}: { categories: CategoryCount[]; active: string; selectedStores: string[] } = $props();
 
 	let scroller: HTMLElement;
 	// Before hydration we can't measure, so assume the common phone case: more tabs to the right.
@@ -41,7 +41,10 @@
 	const scrollByPage = (direction: 1 | -1) =>
 		scroller.scrollBy({ left: direction * scroller.clientWidth * 0.7, behavior: 'smooth' });
 
-	// Keep the store selection when switching category; the server drops stores without offers there.
+	// Categories with nothing in the selected stores are hidden; the one being viewed always stays.
+	const visible = $derived(categories.filter((category) => category.count !== 0 || category.id === active));
+
+	// Keep the store selection when switching category.
 	const hrefFor = (categoryId: string) => {
 		const params = new URLSearchParams({ category: categoryId });
 		for (const store of selectedStores) params.append('store', store);
@@ -65,7 +68,7 @@
 		style:mask-image="linear-gradient(to right, transparent, #000 var(--fade-start), #000 calc(100% - var(--fade-end)), transparent)"
 	>
 		<ul class="flex w-max gap-[clamp(1rem,4vw,1.5rem)] px-4">
-			{#each categories as category (category.id)}
+			{#each visible as category (category.id)}
 				{@const isActive = category.id === active}
 				<li>
 					<a
@@ -76,7 +79,10 @@
 							? 'font-semibold text-ink after:bg-brand'
 							: 'font-medium text-ink-muted after:bg-transparent hover:text-ink'}"
 					>
-						{category.label}
+						{category.label}{#if category.count !== null}<sup
+								class="ml-1 text-[0.625rem] font-semibold tabular-nums {isActive ? 'text-brand-ink' : 'text-ink-muted/80'}"
+								><span class="sr-only">&nbsp;</span>{category.count}<span class="sr-only">&nbsp;tilbud</span></sup
+							>{/if}
 					</a>
 				</li>
 			{/each}
