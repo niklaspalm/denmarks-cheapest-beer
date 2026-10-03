@@ -1,5 +1,5 @@
 import { cacheResult } from './cache.ts';
-import { availableCategories, CATEGORIES, DEFAULT_CATEGORY, findCategory, type CategoryId } from './categories.ts';
+import { availableCategories, CATEGORIES, DEFAULT_CATEGORY, departmentsOf, findCategory, type Category, type CategoryId } from './categories.ts';
 import { cheapestPerLiter, toDrink, type Drink } from './drinks.ts';
 import { fetchAllOffers, type FetchOffersError } from './etilbudsavis/client.ts';
 import { createOffersQuery } from './etilbudsavis/query.ts';
@@ -16,16 +16,16 @@ const CACHE_TTL_MS = 30 * 60 * 1000;
 
 type DrinksResult = Result<Drink[], FetchOffersError>;
 
-const loadCheapestDrinks = async (searchTerm: string): Promise<DrinksResult> => {
-  const result = await fetchAllOffers(createOffersQuery(searchTerm));
+const loadCheapestDrinks = async (category: Category): Promise<DrinksResult> => {
+  const result = await fetchAllOffers(createOffersQuery(category.searchTerm));
   if (!result.ok) return result;
 
-  return { ok: true, value: cheapestPerLiter(result.value).map(toDrink) };
+  return { ok: true, value: cheapestPerLiter(result.value, departmentsOf(category)).map(toDrink) };
 };
 
 // One cache per category, so switching category doesn't evict the others.
 const cachedByCategory = Object.fromEntries(
-  CATEGORIES.map((category) => [category.id, cacheResult(() => loadCheapestDrinks(category.searchTerm), CACHE_TTL_MS)]),
+  CATEGORIES.map((category) => [category.id, cacheResult(() => loadCheapestDrinks(category), CACHE_TTL_MS)]),
 ) as Record<CategoryId, () => Promise<DrinksResult>>;
 
 /** Current offers in `category` priced per liter, cheapest first. Cached in memory for 30 minutes per category. */

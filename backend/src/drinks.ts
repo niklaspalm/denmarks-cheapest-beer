@@ -2,13 +2,17 @@ import type { Offer } from './etilbudsavis/schema.ts';
 
 export type LiterOffer = Offer & { baseUnit: 'liter'; unitPrice: number };
 
-// Free-text search also matches food ("rom" → rum truffles, "whisky" → whisky-glazed pork), so require the drinks department.
-const isDrinkPricedPerLiter = (offer: Offer): offer is LiterOffer =>
-  offer.departmentSlug === 'beverages' && offer.baseUnit === 'liter' && offer.unitPrice !== null;
+const isPricedPerLiter = (offer: Offer): offer is LiterOffer => offer.baseUnit === 'liter' && offer.unitPrice !== null;
 
-/** Keeps only drinks priced per liter, cheapest first. */
-export const cheapestPerLiter = (offers: readonly Offer[]): LiterOffer[] =>
-  offers.filter(isDrinkPricedPerLiter).sort((a, b) => a.unitPrice - b.unitPrice);
+/**
+ * Keeps only offers from `departments` priced per liter, cheapest first. Free-text search also matches food
+ * ("rom" → rum truffles, "whisky" → whisky-glazed pork), which the department filter weeds out.
+ */
+export const cheapestPerLiter = (offers: readonly Offer[], departments: readonly string[] = ['beverages']): LiterOffer[] =>
+  offers
+    .filter((offer) => offer.departmentSlug !== null && departments.includes(offer.departmentSlug))
+    .filter(isPricedPerLiter)
+    .sort((a, b) => a.unitPrice - b.unitPrice);
 
 export type PantStatus = 'included' | 'excluded' | 'unknown';
 

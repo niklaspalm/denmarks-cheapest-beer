@@ -9,6 +9,11 @@ interface CategoryDefinition {
   label: string;
   /** What we send to eTilbudsavis' free-text search. */
   searchTerm: string;
+  /**
+   * eTilbudsavis departments whose offers count. Free-text search also matches food ("rom" → rum truffles),
+   * so this defaults to drinks only; milk is filed under dairy instead.
+   */
+  departments?: readonly string[];
   /** Only offered during this window; always offered when absent. */
   season?: Season;
 }
@@ -16,6 +21,9 @@ interface CategoryDefinition {
 export const CATEGORIES = [
   { id: 'ol', label: 'Øl', searchTerm: 'øl' },
   { id: 'sodavand', label: 'Sodavand', searchTerm: 'sodavand' },
+  { id: 'monster', label: 'Monster', searchTerm: 'monster' },
+  { id: 'red-bull', label: 'Red Bull', searchTerm: 'red bull' },
+  { id: 'maelk', label: 'Mælk', searchTerm: 'mælk', departments: ['dairy-and-cold'] },
   { id: 'glogg', label: 'Gløgg', searchTerm: 'gløgg', season: { from: { month: 11, day: 17 }, until: { month: 12, day: 30 } } },
   { id: 'rodvin', label: 'Rødvin', searchTerm: 'rødvin' },
   { id: 'hvidvin', label: 'Hvidvin', searchTerm: 'hvidvin' },
@@ -32,6 +40,11 @@ export type Category = (typeof CATEGORIES)[number];
 export type CategoryId = Category['id'];
 
 export const DEFAULT_CATEGORY: CategoryId = 'ol';
+
+const DEFAULT_DEPARTMENTS: readonly string[] = ['beverages'];
+
+export const departmentsOf = (category: CategoryDefinition): readonly string[] =>
+  category.departments ?? DEFAULT_DEPARTMENTS;
 
 const danishDate = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Copenhagen', month: 'numeric', day: 'numeric' });
 

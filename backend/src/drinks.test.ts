@@ -22,6 +22,18 @@ test('keeps only per-liter drinks, sorted by unitPrice ascending', () => {
   );
 });
 
+test('keeps offers from the given departments instead of drinks', () => {
+  const result = cheapestPerLiter(
+    [offer('Kakaomælk', 'liter', 10, 'dairy-and-cold'), offer('Shower gel', 'liter', 62.5, 'beauty'), offer('Cola', 'liter', 8)],
+    ['dairy-and-cold'],
+  );
+
+  assert.deepEqual(
+    result.map((o) => o.name),
+    ['Kakaomælk'],
+  );
+});
+
 test('detects pant from the phrasings stores actually use', () => {
   const cases: [string | null, ReturnType<typeof detectPant>][] = [
     ['33 cl. Ex. pant Kasse med 24 stk.', 'excluded'],
