@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { StoreSummary } from 'backend';
 	import PricePerLiter from './PricePerLiter.svelte';
+	import DrinkName from './DrinkName.svelte';
 	import StoreLogo from './StoreLogo.svelte';
 
 	let {
@@ -117,7 +118,7 @@
 								{/if}
 							</span>
 							{#if store.cheapest}
-								<span class="block truncate text-xs text-ink-muted">{store.cheapest.name} · {store.offerCount} tilbud</span>
+								<span class="block truncate text-xs text-ink-muted"><DrinkName text={store.cheapest.name} /> · {store.offerCount} tilbud</span>
 							{:else}
 								<!-- A selected store kept from another category, listed so it can be unselected here. -->
 								<span class="block truncate text-xs text-ink-muted">Ingen tilbud i denne kategori</span>

@@ -79,5 +79,8 @@
 
 	<footer class="mt-16 text-center text-xs text-ink-muted">
 		Data fra eTilbudsavis · opdateres hver halve time. Tjek altid butikkens egen avis.
+		<br />
+		Flag fra <a href="https://github.com/twitter/twemoji" class="underline hover:text-ink">Twemoji</a>, licenseret under
+		<a href="https://creativecommons.org/licenses/by/4.0/" class="underline hover:text-ink">CC BY 4.0</a>.
 	</footer>
 </main>

@@ -3,6 +3,7 @@
 	import { formatPrice } from '#lib/format.ts';
 	import ProductImage from './ProductImage.svelte';
 	import DrinkMeta from './DrinkMeta.svelte';
+	import DrinkName from './DrinkName.svelte';
 	import Facts from './Facts.svelte';
 	import PricePerLiter from './PricePerLiter.svelte';
 	import StoreLogo from './StoreLogo.svelte';
@@ -30,7 +31,7 @@
 		<PricePerLiter price={drink.pricePerLiter} size="lg" />
 
 		<div class="space-y-1">
-			<h2 class="text-[clamp(1rem,4.5vw,1.125rem)] leading-snug font-medium">{drink.name}</h2>
+			<h2 class="text-[clamp(1rem,4.5vw,1.125rem)] leading-snug font-medium"><DrinkName text={drink.name} /></h2>
 			<Facts
 				class="text-sm text-ink-muted"
 				items={[store, drink.pack, drink.price === null ? null : formatPrice(drink.price)]}
