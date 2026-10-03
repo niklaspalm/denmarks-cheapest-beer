@@ -4,9 +4,18 @@
 	import ProductImage from './ProductImage.svelte';
 	import DrinkMeta from './DrinkMeta.svelte';
 	import Facts from './Facts.svelte';
+	import PricePerLiter from './PricePerLiter.svelte';
+	import StoreLogo from './StoreLogo.svelte';
+	import WebshopButton from './WebshopButton.svelte';
 
 	let { drink }: { drink: Drink } = $props();
 </script>
+
+{#snippet store()}
+	<span class="inline-flex items-center gap-1.5">
+		<StoreLogo name={drink.store.name} logo={drink.store.logo} class="size-[1.35em]" />{drink.store.name}
+	</span>
+{/snippet}
 
 <article
 	class="flex items-center gap-[clamp(0.875rem,4vw,1.5rem)] rounded-3xl bg-surface p-[clamp(1rem,4.5vw,1.5rem)] ring-1 ring-line"
@@ -18,18 +27,19 @@
 			Billigst lige nu
 		</p>
 
-		<p class="flex flex-wrap items-baseline gap-x-1.5">
-			<span class="text-[clamp(1.875rem,10vw,3rem)] leading-none font-semibold tracking-tighter tabular-nums">
-				{formatPrice(drink.pricePerLiter)}
-			</span>
-			<span class="text-[clamp(0.875rem,3.5vw,1.125rem)] whitespace-nowrap text-ink-muted">pr. liter</span>
-		</p>
+		<PricePerLiter price={drink.pricePerLiter} size="lg" />
 
 		<div class="space-y-1">
 			<h2 class="text-[clamp(1rem,4.5vw,1.125rem)] leading-snug font-medium">{drink.name}</h2>
-			<Facts class="text-sm text-ink-muted" items={[drink.store.name, drink.pack, drink.price === null ? null : formatPrice(drink.price)]} />
+			<Facts
+				class="text-sm text-ink-muted"
+				items={[store, drink.pack, drink.price === null ? null : formatPrice(drink.price)]}
+			/>
 		</div>
 
 		<DrinkMeta {drink} />
+		{#if drink.webshopLink}
+			<WebshopButton href={drink.webshopLink} drinkName={drink.name} storeName={drink.store.name} size="md" />
+		{/if}
 	</div>
 </article>

@@ -26,6 +26,8 @@ export interface Drink {
   maxQuantity: number | null;
   validFrom: string;
   validUntil: string;
+  /** Where to buy it online (only some webshops, e.g. Wolt Market and nemlig.com). */
+  webshopLink: string | null;
 }
 
 // "Ex. pant", "Ekskl. pant", "Ekskl. embl." (emballage) and "+ pant" all mean the deposit is added on top.
@@ -49,6 +51,17 @@ const formatPack = (offer: Offer): string | null => {
   return `${from === to ? from : `${from}–${to}`} × ${size}`;
 };
 
+/** Third-party URLs end up in an href, so only plain http(s) links get through (no javascript:, data: etc.). */
+export const toExternalUrl = (value: string | null): string | null => {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : null;
+  } catch {
+    return null;
+  }
+};
+
 export const toDrink = (offer: LiterOffer): Drink => ({
   id: offer.publicId,
   name: offer.name,
@@ -65,4 +78,5 @@ export const toDrink = (offer: LiterOffer): Drink => ({
   maxQuantity: offer.pieceCountMax,
   validFrom: offer.validFrom,
   validUntil: offer.validUntil,
+  webshopLink: toExternalUrl(offer.webshopLink),
 });

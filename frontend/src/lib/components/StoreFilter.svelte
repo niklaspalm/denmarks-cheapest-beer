@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { StoreSummary } from 'backend';
-	import { formatPrice } from '#lib/format.ts';
+	import PricePerLiter from './PricePerLiter.svelte';
+	import StoreLogo from './StoreLogo.svelte';
 
 	let {
 		category,
@@ -97,7 +98,7 @@
 				<legend class="sr-only">Butikker</legend>
 				{#each stores as store, index (store.id)}
 					<label
-						class="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-subtle has-checked:bg-brand-soft"
+						class="group flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-subtle has-checked:bg-brand-soft"
 					>
 						<input
 							type="checkbox"
@@ -107,11 +108,7 @@
 							onchange={(event) => event.currentTarget.form?.requestSubmit()}
 							class="size-4 shrink-0 accent-dannebrog-600"
 						/>
-						{#if store.logo}
-							<img src={store.logo} alt="" class="size-7 shrink-0 rounded-lg" />
-						{:else}
-							<span class="size-7 shrink-0 rounded-lg bg-subtle"></span>
-						{/if}
+						<StoreLogo name={store.name} logo={store.logo} class="size-8" />
 						<span class="min-w-0 flex-1">
 							<span class="flex items-baseline gap-1.5">
 								<span class="truncate text-sm font-medium">{store.name}</span>
@@ -126,11 +123,12 @@
 								<span class="block truncate text-xs text-ink-muted">Ingen tilbud i denne kategori</span>
 							{/if}
 						</span>
-						<span class="shrink-0 text-sm font-semibold tabular-nums">
+						<span class="shrink-0">
 							{#if store.cheapest}
-								{formatPrice(store.cheapest.pricePerLiter)}<span class="text-xs font-normal text-ink-muted">/l</span>
+								<!-- A checked row is tinted the same as the price box, so the box switches to the surface color there. -->
+								<PricePerLiter price={store.cheapest.pricePerLiter} class="group-has-checked:bg-surface" />
 							{:else}
-								<span class="text-ink-muted">–</span>
+								<span class="px-2 text-sm text-ink-muted">–</span>
 							{/if}
 						</span>
 					</label>

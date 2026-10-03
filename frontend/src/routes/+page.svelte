@@ -63,9 +63,10 @@
 		{#if rest.length > 0}
 			<section class="mt-10">
 				<h2 class="text-sm font-medium text-ink-muted">Flere tilbud</h2>
-				<ol class="mt-2 divide-y divide-line">
+				<!-- Very faint zebra stripes instead of divider lines; -mx-3/px-3 keep the text aligned with the page edge. -->
+				<ol class="mt-2 -mx-3">
 					{#each rest as drink, index (drink.id)}
-						<li><DrinkRow {drink} rank={index + 2} /></li>
+						<li class="rounded-xl px-3 even:bg-subtle/60 dark:even:bg-subtle/35"><DrinkRow {drink} rank={index + 2} /></li>
 					{/each}
 				</ol>
 			</section>

@@ -22,6 +22,7 @@ const drink = (id: string, storeId: string, pricePerLiter: number): Drink => ({
   maxQuantity: null,
   validFrom: '2026-10-01T00:00:00Z',
   validUntil: '2026-10-08T00:00:00Z',
+  webshopLink: null,
 });
 
 // Netto has beer only; Lidl has beer and red wine; gin failed to load.

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { cheapestPerLiter, detectPant } from './drinks.ts';
+import { cheapestPerLiter, detectPant, toExternalUrl } from './drinks.ts';
 import type { Offer } from './etilbudsavis/schema.ts';
 
 const offer = (name: string, baseUnit: string | null, unitPrice: number | null, departmentSlug = 'beverages'): Offer =>
@@ -37,4 +37,13 @@ test('detects pant from the phrasings stores actually use', () => {
   for (const [description, expected] of cases) {
     assert.equal(detectPant(description), expected, String(description));
   }
+});
+
+test('only lets http(s) webshop links through', () => {
+  assert.equal(toExternalUrl('https://www.nemlig.com/?search=5038780'), 'https://www.nemlig.com/?search=5038780');
+  assert.equal(toExternalUrl('http://example.dk/'), 'http://example.dk/');
+  assert.equal(toExternalUrl('javascript:alert(1)'), null);
+  assert.equal(toExternalUrl('data:text/html,hi'), null);
+  assert.equal(toExternalUrl('not a url'), null);
+  assert.equal(toExternalUrl(null), null);
 });
